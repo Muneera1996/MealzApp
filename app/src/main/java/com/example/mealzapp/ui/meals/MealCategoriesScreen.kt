@@ -35,7 +35,7 @@ import coil.compose.rememberImagePainter
 import com.example.mealzapp.model.response.MealResponse
 
 @Composable
-fun MealsCategoriesScreen(name: String, modifier: Modifier = Modifier) {
+fun MealsCategoriesScreen(navigationCallback: (String) -> Unit) {
     val categoriesViewModel: MealCategoriesViewModel = viewModel()
     // val rememberMeals : MutableState<List<MealResponse>> = remember{ mutableStateOf(emptyList()) }
     val meals = categoriesViewModel.mealsState.value
@@ -48,14 +48,13 @@ fun MealsCategoriesScreen(name: String, modifier: Modifier = Modifier) {
 //    }
     LazyColumn(contentPadding = PaddingValues(16.dp)) {
         items(meals) {
-            // Text(text = it.name)
-            MealCategory(it)
+            MealCategory(it,navigationCallback)
         }
     }
 }
 
 @Composable
-fun MealCategory(it: MealResponse) {
+fun MealCategory(meal: MealResponse,navigationCallback: (String) -> Unit) {
     var isExpanded by remember{ mutableStateOf(false) }
     Card(
         shape = RoundedCornerShape(8.dp),
@@ -63,11 +62,12 @@ fun MealCategory(it: MealResponse) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp)
+            .clickable{navigationCallback(meal.id)}
     ) {
 
         Row(modifier = Modifier.animateContentSize()) {
             Image(
-                painter = rememberImagePainter(it.imageUrl),
+                painter = rememberImagePainter(meal.imageUrl),
                 contentDescription = null,
                 modifier = Modifier
                     .size(88.dp)
@@ -81,10 +81,10 @@ fun MealCategory(it: MealResponse) {
                     .fillMaxWidth(0.8f)
                     .padding(16.dp),
             ) {
-                Text(text = it.name, style = MaterialTheme.typography.h6)
+                Text(text = meal.name, style = MaterialTheme.typography.h6)
                 CompositionLocalProvider(value = LocalContentAlpha provides ContentAlpha.high) {
                     Text(
-                        text = it.description, style = MaterialTheme.typography.body2,
+                        text = meal.description, style = MaterialTheme.typography.body2,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = if (isExpanded) 10 else 4
                     )
