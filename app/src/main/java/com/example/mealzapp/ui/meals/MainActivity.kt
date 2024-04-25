@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MealzAppTheme {
+                //start defining navigation
                 mealsNavigation()
             }
         }
